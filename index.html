@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MeetScribe — meeting transcripts and summaries, your keys, your data, no middleman</title>
+<meta name="description" content="Local-first desktop app for Windows (macOS coming soon). Bring your own API keys. No subscription, no backend, no middleman." />
+<meta name="theme-color" content="#0a0a0a" />
+<link rel="icon" type="image/svg+xml" href="assets/meetscribe-icon.svg" />
+
+<meta property="og:title" content="MeetScribe" />
+<meta property="og:description" content="Meeting transcripts and summaries — your keys, your data, no middleman." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+
+<style>
+/* ---------- Tokens ---------- */
+:root {
+  --bg:        #fbfaf7;
+  --bg-soft:   #f3f0e9;
+  --bg-card:   #ffffff;
+  --bg-inset:  #f6f3ec;
+  --ink:       #14130f;
+  --ink-2:     #34322c;
+  --muted:     #6f6c63;
+  --rule:      #e7e3d8;
+  --rule-soft: #efece3;
+  --accent:    #e44b3a;
+  --accent-ink:#ffffff;
+  --accent-tint:#fde9e6;
+  --ok:        #2f7d4a;
+  --no:        #a23b2d;
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --col: 720px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #0a0a0a;
+    --bg-soft:   #111110;
+    --bg-card:   #131312;
+    --bg-inset:  #161614;
+    --ink:       #f4f1ea;
+    --ink-2:     #d4d0c5;
+    --muted:     #8a877e;
+    --rule:      #211f1c;
+    --rule-soft: #1a1816;
+    --accent:    #ef5645;
+    --accent-ink:#ffffff;
+    --accent-tint:#2a1411;
+    --ok:        #5dbe7a;
+    --no:        #d97266;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+html { color-scheme: light dark; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: color-mix(in oklab, var(--ink) 25%, transparent); }
+a:hover { text-decoration-color: var(--accent); color: var(--accent); }
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- Layout ---------- */
+.wrap {
+  max-width: calc(var(--col) + 64px);
+  padding: 0 32px;
+  margin: 0 auto;
+}
+
+main > section {
+  padding: 56px 0;
+  border-top: 1px solid var(--rule);
+}
+main > section:first-of-type { border-top: 0; }
+
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: 38px; line-height: 1.12; letter-spacing: -0.022em; }
+h2 { font-size: 24px; line-height: 1.2; margin-bottom: 22px; }
+h3 { font-size: 17px; line-height: 1.3; }
+
+p { margin: 0 0 1em; text-wrap: pretty; max-width: var(--col); }
+p:last-child { margin-bottom: 0; }
+
+.lede { font-size: 18.5px; color: var(--ink-2); line-height: 1.55; }
+
+small, .mono { font-family: var(--mono); }
+.mono { font-size: 13px; letter-spacing: -0.01em; }
+
+/* ---------- Site head ---------- */
+.site-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0 0;
+  font-size: 14px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 600;
+}
+.brand:hover { color: var(--ink); }
+.brand-name { letter-spacing: -0.012em; }
+.brand-mark {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+.brand-mark.in-app {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.head-links { display: flex; gap: 22px; align-items: center; color: var(--muted); }
+.head-links a { color: var(--muted); text-decoration: none; }
+.head-links a:hover { color: var(--ink); }
+
+/* ---------- Hero ---------- */
+.hero { padding-top: 64px; padding-bottom: 0; }
+.hero h1 { font-size: 44px; max-width: 640px; }
+.hero .lede { max-width: 600px; margin-top: 16px; }
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 14px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font: 500 15px/1 var(--sans);
+  text-decoration: none;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease, transform .04s ease;
+}
+.btn:hover { border-color: color-mix(in oklab, var(--ink) 35%, transparent); color: var(--ink); }
+.btn:active { transform: translateY(1px); }
+.btn .platform { color: var(--muted); font-weight: 400; }
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn.primary:hover { background: color-mix(in oklab, var(--accent) 88%, black); border-color: color-mix(in oklab, var(--accent) 88%, black); color: var(--accent-ink); }
+.btn.primary .platform { color: color-mix(in oklab, var(--accent-ink) 80%, transparent); }
+.btn svg { display: block; }
+
+.honesty {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14.5px;
+  max-width: 560px;
+}
+.honesty strong { color: var(--ink-2); font-weight: 500; }
+
+.tertiary {
+  margin-top: 22px;
+  font-size: 14.5px;
+}
+.tertiary a { color: var(--ink-2); }
+
+/* ---------- App screenshot card (visual proof) ---------- */
+.app-shot {
+  margin-top: 44px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #0a0a0a;
+  box-shadow: 0 1px 0 var(--rule), 0 18px 40px -28px rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme: dark) {
+  .app-shot { box-shadow: 0 1px 0 var(--rule-soft), 0 20px 60px -30px rgba(0,0,0,.7); }
+}
+.app-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #000;
+  color: #aaa;
+  font-size: 12px;
+}
+.app-titlebar .lights { display: inline-flex; gap: 6px; }
+.app-titlebar .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.app-titlebar .lights i:nth-child(1) { background: #ff5f57; }
+.app-titlebar .lights i:nth-child(2) { background: #febc2e; }
+.app-titlebar .lights i:nth-child(3) { background: #28c840; }
+.app-titlebar .title { margin-left: 12px; color: #c8c8c8; font-weight: 500; }
+
+.app-body { padding: 22px 24px 24px; color: #e9e6df; font-family: var(--sans); }
+.app-toprow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.app-brand { display: inline-flex; align-items: center; gap: 10px; color: #f4f1ea; font-weight: 600; }
+
+.app-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 18px;
+  align-items: end;
+  padding: 18px 18px;
+  border: 1px solid #1f1f1f;
+  border-radius: 10px;
+  background: #111110;
+}
+.app-label { color: #7c7a72; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.app-select {
+  background: #1a1a18;
+  border: 1px solid #25241f;
+  border-radius: 6px;
+  color: #f4f1ea;
+  padding: 9px 30px 9px 12px;
+  font-size: 14px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+.app-select::after {
+  content: "▾";
+  color: #7c7a72;
+  position: absolute;
+  right: 10px;
+  font-size: 10px;
+}
+.app-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ef5645;
+  color: #fff;
+  border: 0;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.app-rec .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; }
+
+.app-status {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #9b988e;
+  font-size: 13px;
+}
+.app-status .ok { width: 14px; height: 14px; border-radius: 50%; background: #1b3a25; border: 1px solid #2f7d4a; display: inline-flex; align-items: center; justify-content: center; color: #6dd093; font-size: 9px; font-weight: 700; }
+
+.app-recent { margin-top: 22px; display: flex; justify-content: space-between; align-items: baseline; }
+.app-recent h4 { color: #f4f1ea; margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.app-recent .total { font-family: var(--mono); font-size: 11px; color: #8a877e; border: 1px solid #25241f; padding: 4px 10px; border-radius: 999px; letter-spacing: 0.04em; }
+
+.app-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #1a1a18;
+  border-radius: 8px;
+  margin-top: 10px;
+  background: #0f0f0e;
+}
+.app-row .when { color: #f4f1ea; font-size: 13px; font-weight: 600; }
+.app-row .id   { font-family: var(--mono); color: #7c7a72; font-size: 11px; margin-top: 2px; }
+.app-row .tag  { font-family: var(--mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; background: #2b1a25; color: #d99fb7; letter-spacing: 0.08em; }
+.app-row .date { color: #9b988e; font-size: 12px; }
+.app-row .dur  { color: #f4f1ea; font-size: 12px; font-family: var(--mono); }
+
+/* ---------- Lists ---------- */
+.pitch-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 22px;
+}
+.pitch-list li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.pitch-list .num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.pitch-list strong { display: block; color: var(--ink); margin-bottom: 2px; font-weight: 600; }
+.pitch-list span { color: var(--ink-2); }
+
+/* ---------- Why / proof rows ---------- */
+.proof {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.proof > div {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.proof .claim { font-weight: 600; color: var(--ink); }
+.proof .proof-line { color: var(--ink-2); }
+.proof .proof-line code, .proof .proof-line .mono { background: var(--bg-inset); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .proof > div { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* ---------- Pull quote ---------- */
+.pull {
+  margin: 24px 0;
+  padding: 18px 20px;
+  border-left: 2px solid var(--accent);
+  background: var(--bg-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink-2);
+}
+.pull p { margin: 0; }
+.pull p + p { margin-top: 10px; }
+
+/* ---------- Provider cards ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+
+.card {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  background: var(--bg-card);
+}
+.card h3 { margin-bottom: 4px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.card h3 .small { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: 6px; font-family: var(--mono); }
+.card ul { list-style: none; padding: 0; margin: 8px 0 0; }
+.card li { padding: 10px 0; border-top: 1px solid var(--rule-soft); }
+.card li:first-child { border-top: 0; padding-top: 4px; }
+.card li b { font-weight: 600; color: var(--ink); display: block; margin-bottom: 1px; }
+.card li b .badge { display: inline-block; margin-left: 8px; font-size: 10px; font-family: var(--mono); font-weight: 500; padding: 2px 6px; border-radius: 3px; background: var(--accent-tint); color: var(--accent); letter-spacing: 0.06em; vertical-align: 1px; }
+.card li span { color: var(--muted); font-size: 14px; }
+
+/* ---------- Cost table ---------- */
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  margin-top: 8px;
+}
+.cost-table th, .cost-table td {
+  text-align: left;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 15px;
+}
+.cost-table th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom-color: var(--rule);
+}
+.cost-table th:last-child { text-align: right; }
+.cost-table td:last-child { text-align: right; color: var(--ink); font-weight: 500; }
+.cost-table tr:last-child td { border-bottom: 0; }
+
+.fine {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* ---------- Flow diagram ---------- */
+.flow {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 22px 22px 18px;
+  background: var(--bg-soft);
+  margin-top: 4px;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr auto;
+  align-items: center;
+  gap: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.flow-node {
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 0;
+  text-align: center;
+  line-height: 1.25;
+}
+.flow-node b { display: block; font-weight: 600; color: var(--ink); font-family: var(--sans); font-size: 13px; }
+.flow-node .sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+.flow-node.you { background: var(--bg-card); }
+.flow-node.app { border-color: var(--accent); background: var(--accent-tint); }
+.flow-node.app b { color: var(--accent); }
+.flow-arrow {
+  position: relative;
+  height: 1px;
+  background: color-mix(in oklab, var(--ink) 22%, transparent);
+  margin: 0 4px;
+}
+.flow-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px; top: -3px;
+  border-left: 6px solid color-mix(in oklab, var(--ink) 22%, transparent);
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+}
+.flow-arrow .label {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  top: -2px;
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  background: var(--bg-soft);
+  padding: 0 6px;
+}
+.flow-split {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.flow-split .arm {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+.flow-note {
+  margin-top: 16px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .flow-row { grid-template-columns: 1fr; gap: 10px; }
+  .flow-arrow { height: 16px; width: 1px; background: color-mix(in oklab, var(--ink) 22%, transparent); margin: 0 auto; }
+  .flow-arrow::after { right: -3px; top: auto; bottom: -1px; border: none; border-top: 6px solid color-mix(in oklab, var(--ink) 22%, transparent); border-left: 3px solid transparent; border-right: 3px solid transparent; }
+  .flow-arrow .label { left: auto; transform: none; top: 50%; background: var(--bg-soft); padding: 2px 6px; margin-left: 10px; }
+  .flow-split { grid-template-columns: 1fr; }
+}
+
+/* ---------- Setup steps ---------- */
+.setup {
+  display: grid;
+  gap: 14px;
+  counter-reset: step;
+}
+.setup .step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 14px;
+  align-items: baseline;
+}
+.setup .step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.setup .step b { color: var(--ink); font-weight: 600; }
+.setup .step span { color: var(--ink-2); }
+.setup-footer { margin-top: 14px; color: var(--muted); font-size: 14px; font-family: var(--mono); }
+
+/* ---------- Yes / No fit ---------- */
+.fit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+@media (max-width: 640px) { .fit { grid-template-columns: 1fr; } }
+.fit > div { padding: 20px 22px; }
+.fit > div + div { border-left: 1px solid var(--rule); }
+@media (max-width: 640px) { .fit > div + div { border-left: 0; border-top: 1px solid var(--rule); } }
+.fit h3 {
+  font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.fit h3 .pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.fit .yes .pill { background: color-mix(in oklab, var(--ok) 18%, var(--bg)); color: var(--ok); }
+.fit .no  .pill { background: color-mix(in oklab, var(--no) 18%, var(--bg)); color: var(--no); }
+.fit ul { list-style: none; padding: 0; margin: 0; }
+.fit li {
+  padding: 9px 0 9px 22px;
+  position: relative;
+  color: var(--ink-2);
+  border-top: 1px solid var(--rule-soft);
+  font-size: 15px;
+}
+.fit li:first-child { border-top: 0; }
+.fit .yes li::before {
+  content: "";
+  position: absolute; left: 0; top: 16px;
+  width: 10px; height: 5px;
+  border-left: 1.5px solid var(--ok);
+  border-bottom: 1.5px solid var(--ok);
+  transform: rotate(-45deg);
+}
+.fit .no li::before {
+  content: "";
+  position: absolute; left: 1px; top: 18px;
+  width: 11px; height: 1.5px;
+  background: var(--no);
+}
+
+/* ---------- Disclosure ---------- */
+.disclosure {
+  font-style: italic;
+  color: var(--ink-2);
+  border-left: 2px solid var(--rule);
+  padding: 8px 0 8px 18px;
+  max-width: var(--col);
+}
+
+/* ---------- Footer ---------- */
+footer {
+  margin-top: 36px;
+  padding: 36px 0 56px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.foot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 640px) { .foot-grid { grid-template-columns: 1fr; } }
+footer a { color: var(--ink-2); }
+footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.foot-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 18px; line-height: 1.7; }
+.foot-meta .sep { opacity: 0.5; margin: 0 6px; }
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* macOS coming-soon button: disabled-looking, non-interactive */
+.btn.is-soon {
+  background: var(--bg-soft);
+  color: var(--muted);
+  border-style: dashed;
+  border-color: var(--rule);
+  cursor: not-allowed;
+  user-select: none;
+}
+.btn.is-soon:hover { border-color: var(--rule); color: var(--muted); background: var(--bg-soft); }
+.btn.is-soon .platform { color: var(--muted); }
+.btn.is-soon svg { opacity: 0.5; }
+
+/* OS-detect: JS toggles .is-mac / .is-win on <html>. Mac visitors see a 'notify me' hint. */
+.is-mac #mac-notify { display: block; }
+.is-mac #mac-notify a { color: var(--accent); }
+.is-mac #mac-notify a:hover { color: color-mix(in oklab, var(--accent) 80%, black); }
+.is-mac .btn.is-soon { border-color: var(--accent); color: var(--accent); }
+.is-mac .btn.is-soon svg { opacity: 0.7; }
+.is-mac .btn.is-soon .platform { color: color-mix(in oklab, var(--accent) 75%, var(--muted)); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="site-head" data-screen-label="Site head">
+    <a class="brand" href="#top" aria-label="MeetScribe home">
+      <img class="brand-mark" src="assets/meetscribe-icon.svg" alt="" width="26" height="26" />
+      <span class="brand-name">MeetScribe</span>
+    </a>
+    <nav class="head-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#cost">Cost</a>
+      <a href="#download">Download</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" data-screen-label="Hero" id="download">
+      <h1>Meeting transcripts and summaries — your keys, your data, no middleman.</h1>
+      <p class="lede">Local-first desktop app for Windows (macOS coming soon). Bring your own&nbsp;API&nbsp;keys. No&nbsp;subscription.</p>
+
+      <div class="cta-row" role="group" aria-label="Download MeetScribe">
+        <span class="btn btn-mac is-soon" aria-disabled="true" title="macOS build is not yet available">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 1.2c.1.9-.3 1.7-.8 2.3-.6.6-1.5 1-2.2.9-.1-.8.3-1.7.8-2.3.6-.6 1.5-1 2.2-.9zM12.6 5.6c-1-.6-2.4-.7-3 0-.4.4-1.1.4-1.5 0-.5-.4-2-.5-3 .1-1.5 1-1.4 4.1-.1 6.3.5.8 1.2 1.7 2 1.7s1-.5 2-.5 1.2.5 2 .5 1.5-.8 2-1.7c.4-.6.6-1.2.7-1.3-1.9-.7-2.1-3.4-.1-5.1z"/></svg>
+          macOS <span class="platform">— coming soon</span>
+        </span>
+        <span class="btn btn-win is-soon" aria-disabled="true" title="Windows build is not yet available">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M0 2.2 5.7 1.4v5.2H0V2.2zm0 5.2h5.7v5.2L0 11.8V7.4zm6.4-6.1L14 0v6.6H6.4V1.3zm0 6.1H14V14l-7.6-1.1V7.4z"/></svg>
+          Windows <span class="platform">— coming soon</span>
+        </span>
+      </div>
+
+      <p class="honesty"><strong>Requires two API keys</strong> (STT&nbsp;+&nbsp;LLM). Setup takes ~5&nbsp;minutes. Often free for light use, ~$15&ndash;20/month if you record 40&nbsp;hrs/month.</p>
+
+      <!-- Product preview -->
+      <figure class="app-shot" aria-label="MeetScribe app preview" style="margin-bottom: 10px;">
+        <div class="app-titlebar">
+          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="title">MeetScribe</span>
+        </div>
+        <div class="app-body">
+          <div class="app-toprow">
+            <span class="app-brand">
+              <img class="brand-mark in-app" src="assets/meetscribe-mark.svg" alt="" width="22" height="22" />
+              MeetScribe
+            </span>
+          </div>
+          <div class="app-panel">
+            <div>
+              <div class="app-label">Language</div>
+              <div class="app-select">English</div>
+            </div>
+            <div>
+              <div class="app-label">Type</div>
+              <div class="app-select">General</div>
+            </div>
+            <button class="app-rec" type="button" tabindex="-1">
+              <span class="dot"></span> Start Recording
+            </button>
+          </div>
+          <div class="app-status">
+            <span class="ok">✓</span> Recording will use Gladia · Gemini 2.5 Flash
+          </div>
+          <div class="app-recent">
+            <h4>Recent Meetings</h4>
+            <span class="total">TOTAL: 21 MEETINGS</span>
+          </div>
+          <div class="app-row">
+            <div>
+              <div class="when">2026-05-13 14:49</div>
+              <div class="id">ID: MS-B0DF-5</div>
+            </div>
+            <span class="tag">GENERAL</span>
+            <span class="date">May 13, 2026 at 14:49</span>
+            <span class="dur">12m 15s</span>
+          </div>
+          <div class="app-row">
+            <div>
+              <div class="when">2026-05-13 10:57</div>
+              <div class="id">ID: MS-4CEE-0</div>
+            </div>
+            <span class="tag">GENERAL</span>
+            <span class="date">May 13, 2026 at 10:57</span>
+            <span class="dur">24m 3s</span>
+          </div>
+          <div class="app-row">
+            <div>
+              <div class="when">2026-05-13 10:30</div>
+              <div class="id">ID: MS-A878-7</div>
+            </div>
+            <span class="tag">GENERAL</span>
+            <span class="date">May 13, 2026 at 10:30</span>
+            <span class="dur">47m 45s</span>
+          </div>
+        </div>
+        <figcaption class="fine" style="padding: 10px 16px 14px;">macOS build pictured — Windows ships first.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ===== What it does ===== -->
+    <section data-screen-label="What it does">
+      <div class="kicker">What it does</div>
+      <h2>The short version.</h2>
+      <ol class="pitch-list">
+        <li>
+          <span class="num">01</span>
+          <div>
+            <strong>Captures both sides of your meeting.</strong>
+            <span>System audio (Zoom / Meet / Teams output) and your microphone, mixed locally. No bot joins the call.</span>
+          </div>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <div>
+            <strong>Streams to a transcription provider you choose.</strong>
+            <span>Gladia or AssemblyAI — your key, your bill, your data.</span>
+          </div>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <div>
+            <strong>Summarizes with the LLM you choose.</strong>
+            <span>Gemini (default, best cost/performance), DeepSeek (cheapest), or OpenAI — your key, your bill.</span>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ===== Why this exists ===== -->
+    <section data-screen-label="Why this exists">
+      <div class="kicker">Why this app exists</div>
+      <h2>Specific claims, with the proof attached.</h2>
+      <div class="proof">
+        <div>
+          <div class="claim">Your audio never touches our servers.</div>
+          <div class="proof-line">We don't have servers. Audio goes from your Mac or PC straight to the STT provider you picked.</div>
+        </div>
+        <div>
+          <div class="claim">Your keys live in your OS keychain.</div>
+          <div class="proof-line">macOS Keychain on Mac. Windows Credential Manager on Windows. We never see them — there's nothing to send them to.</div>
+        </div>
+        <div>
+          <div class="claim">All your meetings stay on your machine.</div>
+          <div class="proof-line">Transcripts and summaries are saved as plain files in your home folder. Delete the folder, the data is gone. No "cloud sync" toggle hiding somewhere.</div>
+        </div>
+        <div>
+          <div class="claim">You can audit every network call.</div>
+          <div class="proof-line">The app talks to exactly three places: your STT provider, your LLM provider, and the update server (only if you opt in to update checks). Watch with <span class="mono">Little&nbsp;Snitch</span> or <span class="mono">Wireshark</span> — that's all there is.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Why two API keys ===== -->
+    <section data-screen-label="Two API keys">
+      <div class="kicker">The honest part</div>
+      <h2>Why two API keys?</h2>
+      <p>MeetScribe is a desktop app, not a hosted service. To transcribe audio it needs a transcription provider. To summarize text it needs an LLM. We don't run our own — we'd need a backend, your data would pass through our infrastructure, and we'd be on the hook for someone else's bill. Instead, you sign up for the providers you trust (or already use), paste two keys, and the app talks directly to them.</p>
+
+      <div class="pull">
+        <p><strong>Trade-off:</strong> ~5 minutes of setup vs. one-click.</p>
+        <p><strong>Upside:</strong> no middleman, no markup, no "we promise not to look," and you can switch providers any time without asking us.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>STT <span class="small">transcription</span></h3>
+          <ul>
+            <li>
+              <b>Gladia <span class="badge">RECOMMENDED</span></b>
+              <span>Free 10&nbsp;hrs/month, then ~$0.61/hr. Best for occasional use.</span>
+            </li>
+            <li>
+              <b>AssemblyAI</b>
+              <span>$50 signup credit (~138&nbsp;hrs free). Best if you have heavy months.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>LLM <span class="small">summary</span></h3>
+          <ul>
+            <li>
+              <b>Google Gemini <span class="badge">DEFAULT</span></b>
+              <span>Best cost/performance balance. Free tier covers typical use; ~$1.69/mo after.</span>
+            </li>
+            <li>
+              <b>OpenAI</b>
+              <span>Pay-as-you-go, ~$1.39/mo at typical use. Strongest English / European-language quality.</span>
+            </li>
+            <li>
+              <b>DeepSeek <span class="badge">CHEAPEST</span></b>
+              <span>$5 signup credit ≈ 3 months free, ~$0.31/mo after.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Cost ===== -->
+    <section id="cost" data-screen-label="Cost">
+      <div class="kicker">Cost</div>
+      <h2>What you'll actually pay.</h2>
+      <table class="cost-table">
+        <thead>
+          <tr><th>Usage</th><th>Typical monthly cost</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A few meetings a week</td><td>$0</td></tr>
+          <tr><td>~10 hrs/month</td><td>$0&ndash;$1</td></tr>
+          <tr><td>~40 hrs/month</td><td>~$15&ndash;$20</td></tr>
+        </tbody>
+      </table>
+      <p class="fine">You pay providers directly. We never bill you. There is no MeetScribe subscription.</p>
+    </section>
+
+    <!-- ===== How it works ===== -->
+    <section id="how" data-screen-label="How it works">
+      <div class="kicker">How it works</div>
+      <h2>Your machine talks to providers. Nothing in the middle.</h2>
+
+      <div class="flow" aria-label="Data flow diagram">
+        <div class="flow-row">
+          <div class="flow-node you">
+            <b>You</b>
+            <span class="sub">mic + system audio</span>
+          </div>
+          <div class="flow-arrow"><span class="label">local</span></div>
+          <div class="flow-node app">
+            <b>MeetScribe</b>
+            <span class="sub">desktop app · mixed locally</span>
+          </div>
+          <div class="flow-arrow"><span class="label">your key</span></div>
+          <div class="flow-node">
+            <b>STT provider</b>
+            <span class="sub">Gladia / AssemblyAI</span>
+          </div>
+        </div>
+
+        <div class="flow-split">
+          <div class="arm">
+            <div class="flow-node">
+              <b>LLM provider</b>
+              <span class="sub">DeepSeek / Gemini / OpenAI</span>
+            </div>
+            <div class="flow-arrow"><span class="label">summary</span></div>
+            <div class="flow-node app">
+              <b>MeetScribe</b>
+              <span class="sub">writes plain files</span>
+            </div>
+          </div>
+          <div class="arm">
+            <div class="flow-node app">
+              <b>MeetScribe</b>
+            </div>
+            <div class="flow-arrow"><span class="label">~/MeetScribe/</span></div>
+            <div class="flow-node you">
+              <b>Your disk</b>
+              <span class="sub">transcripts + summaries</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-note">// no backend · no analytics · no telemetry</div>
+      </div>
+    </section>
+
+    <!-- ===== Setup ===== -->
+    <section data-screen-label="Setup">
+      <div class="kicker">Quick setup</div>
+      <h2>From download to first transcript in ~5 minutes.</h2>
+      <ol class="setup">
+        <li class="step"><div><b>Download</b> <span>for Windows (macOS coming soon).</span></div></li>
+        <li class="step"><div><b>Get a free STT key</b> <span>from Gladia or AssemblyAI.</span></div></li>
+        <li class="step"><div><b>Get a free LLM key</b> <span>from Gemini (recommended for balance) or DeepSeek (cheapest).</span></div></li>
+        <li class="step"><div><b>Paste both keys.</b> <span>Start recording.</span></div></li>
+      </ol>
+      <div class="setup-footer">// no account · no login · no email</div>
+    </section>
+
+    <!-- ===== Is this for me? ===== -->
+    <section data-screen-label="Is this for me">
+      <div class="kicker">Is this for me?</div>
+      <h2>If we're not your fit, here's who is.</h2>
+      <div class="fit">
+        <div class="yes">
+          <h3>You'll like MeetScribe <span class="pill">yes</span></h3>
+          <ul>
+            <li>You want your meeting data on your machine, not in a SaaS.</li>
+            <li>You're comfortable signing up for two API providers.</li>
+            <li>You want to pay only for what you use.</li>
+            <li>You like desktop apps you can audit at the network level.</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>You'll be happier elsewhere <span class="pill">try others</span></h3>
+          <ul>
+            <li>You want one-click setup with no API keys.</li>
+            <li>You want shared team workspaces and Notion / Slack / calendar integrations.</li>
+            <li>You'd rather pay a flat ~$19/mo and not think about it.</li>
+            <li>You need an SLA, account management, or support contract.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer data-screen-label="Footer">
+    <div class="foot-grid">
+      <div>
+        <div class="kicker" style="margin-bottom:8px;">MeetScribe</div>
+        <ul>
+          <li><a href="PRIVACY.md">PRIVACY.md</a></li>
+          <li><a href="#">Ideas / wishlist&nbsp;↗</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="kicker" style="margin-bottom:8px;">Contact</div>
+        <ul>
+          <li>Maintainer: <a href="mailto:xuantruong2k@gmail.com">xuantruong2k@gmail.com</a></li>
+          <li>No newsletter. No "© Inc." There is no Inc.</li>
+          <li>No third-party analytics on this page.</li>
+        </ul>
+      </div>
+    </div>
+    <!-- BUMP ON EACH RELEASE: version + commit -->
+    <div class="foot-meta">
+      build <span style="color:var(--ink-2);">v0.0.3</span> &middot; commit <span style="color:var(--ink-2);">a7f3c91</span><span class="sep">&middot;</span>signed Windows binary<span class="sep">&middot;</span>SHA-256 in release notes
+    </div>
+  </footer>
+</div>
+
+<script>
+// Detect platform (used only for analytics-free CSS styling hooks, if any).
+(function () {
+  try {
+    var ua = (navigator.userAgent || '').toLowerCase();
+    var platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    platform = platform.toLowerCase();
+    var html = document.documentElement;
+    if (/mac|iphone|ipad|ipod/.test(platform) || ua.indexOf('mac') !== -1) {
+      html.classList.add('is-mac');
+    } else if (/win/.test(platform) || ua.indexOf('windows') !== -1) {
+      html.classList.add('is-win');
+    }
+  } catch (e) { /* no-op */ }
+})();
+</script>
+
+</body>
+</html>
