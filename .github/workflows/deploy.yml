@@ -28,6 +28,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: >-
             pages deploy .
-            --project-name=meetscribe-site
+            --project-name=meetscribe
             --branch=main
             --commit-dirty=true
