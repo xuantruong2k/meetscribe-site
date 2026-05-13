@@ -8,4 +8,4 @@ Open `index.html` in any browser. That's the entire development loop. No `npm in
 
 ## Deploy
 
-Push to `main`. Cloudflare Pages picks up the change automatically and publishes within ~30 seconds. The HTML cache TTL is 5 minutes (see `_headers`), so updates go fully live within ~5 minutes of a push. PRs against `main` get an auto-generated preview deploy at `<branch>.meetscribe-site.pages.dev`.
+Push to `main`. The `.github/workflows/deploy.yml` workflow runs on every push and uploads the repo to Cloudflare Pages via `wrangler pages deploy` (the Pages project is in Direct Upload mode — there is no Cloudflare-side Git integration). End-to-end takes ~30–60 seconds, plus the 5-minute HTML cache TTL from `_headers` before changes are fully live for all visitors.
