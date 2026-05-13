@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<script>
+  if (location.hostname.endsWith('.pages.dev')) {
+    location.replace('https://meetscribe.goldenpaw.org' + location.pathname + location.search + location.hash);
+  }
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MeetScribe — meeting transcripts and summaries, your keys, your data, no middleman</title>
 <meta name="description" content="Local-first desktop app for Windows (macOS coming soon). Bring your own API keys. No subscription, no backend, no middleman." />
