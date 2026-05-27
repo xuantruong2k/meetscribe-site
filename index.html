@@ -638,13 +638,80 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .btn.is-soon .platform { color: var(--muted); }
 .btn.is-soon svg { opacity: 0.5; }
 
-/* OS-detect: JS toggles .is-mac / .is-win on <html>. Mac visitors see a 'notify me' hint. */
-.is-mac #mac-notify { display: block; }
-.is-mac #mac-notify a { color: var(--accent); }
-.is-mac #mac-notify a:hover { color: color-mix(in oklab, var(--accent) 80%, black); }
+/* OS-detect: JS toggles .is-mac / .is-win on <html>. Mac visitors get the coming-soon button + Gatekeeper note accented. */
 .is-mac .btn.is-soon { border-color: var(--accent); color: var(--accent); }
 .is-mac .btn.is-soon svg { opacity: 0.7; }
 .is-mac .btn.is-soon .platform { color: color-mix(in oklab, var(--accent) 75%, var(--muted)); }
+
+/* ---------- macOS Gatekeeper first-run note ---------- */
+.gatekeeper {
+  margin-top: 16px;
+  max-width: var(--col);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  font-size: 14.5px;
+}
+.is-mac .gatekeeper { border-color: color-mix(in oklab, var(--accent) 45%, var(--rule)); }
+.gatekeeper > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  color: var(--ink-2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.gatekeeper > summary::-webkit-details-marker { display: none; }
+.gatekeeper > summary::after {
+  content: "+";
+  margin-left: auto;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 15px;
+}
+.gatekeeper[open] > summary::after { content: "\2013"; }
+.gatekeeper > summary em { font-style: normal; color: var(--ink); font-weight: 600; }
+.gk-os {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--bg-inset);
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.gk-body { padding: 4px 16px 16px; }
+.gk-body > p:first-child { margin-top: 0; color: var(--ink-2); }
+.gk-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 14px;
+}
+@media (max-width: 640px) { .gk-methods { grid-template-columns: 1fr; } }
+.gk-method h4 { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.gk-method p { margin: 0 0 8px; color: var(--ink-2); }
+.gk-method ol { margin: 0; padding-left: 18px; color: var(--ink-2); }
+.gk-method ol li { margin: 5px 0; }
+.gk-method b { color: var(--ink); font-weight: 600; }
+.gk-cmd {
+  background: var(--bg-inset);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin: 0 0 8px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  -webkit-user-select: all;
+  user-select: all;
+}
+.gk-cmd code { font-family: inherit; }
 </style>
 </head>
 <body>
@@ -686,6 +753,33 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
       </div>
 
       <p class="honesty"><strong>Requires two API keys</strong> (STT&nbsp;+&nbsp;LLM). Setup takes ~5&nbsp;minutes. Often free for light use, ~$15&ndash;20/month if you record 40&nbsp;hrs/month.</p>
+
+      <!-- macOS first-run Gatekeeper bypass (interim, while the build ships unsigned). Drop once Developer ID signing + notarization land. -->
+      <details class="gatekeeper">
+        <summary>
+          <span class="gk-os">macOS</span>
+          <span class="gk-msg">Running the early macOS build? First launch says <em>&ldquo;MeetScribe is damaged&rdquo;</em> — it isn't. Here's the one-time fix.</span>
+        </summary>
+        <div class="gk-body">
+          <p>The macOS app is still in preview and isn't notarized by Apple yet, so Gatekeeper blocks it on first open. The app is fine — macOS just won't vouch for an app without a Developer&nbsp;ID certificate. Clear the quarantine flag once and it opens normally from then on. Apple-Silicon Macs only for now.</p>
+          <div class="gk-methods">
+            <div class="gk-method">
+              <h4>Terminal — fastest</h4>
+              <p>Drag <b>MeetScribe.app</b> to <b>/Applications</b>, then run:</p>
+              <pre class="gk-cmd"><code>xattr -cr /Applications/MeetScribe.app</code></pre>
+              <p class="fine">Removes the quarantine flag for good.</p>
+            </div>
+            <div class="gk-method">
+              <h4>No Terminal — System Settings</h4>
+              <ol>
+                <li>Drag <b>MeetScribe.app</b> to <b>/Applications</b>, double-click it, click <b>OK</b> at the error.</li>
+                <li>Open <b>System Settings &rarr; Privacy &amp; Security</b>.</li>
+                <li>Scroll down, click <b>Open Anyway</b>, then confirm. macOS remembers the choice.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </details>
 
       <!-- Product preview -->
       <figure class="app-shot" aria-label="MeetScribe app preview" style="margin-bottom: 10px;">
