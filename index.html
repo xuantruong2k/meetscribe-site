@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MeetScribe — meeting transcripts and summaries, your keys, your data, no middleman</title>
-<meta name="description" content="Local-first desktop app for Windows (macOS coming soon). Bring your own API keys. No subscription, no backend, no middleman." />
+<meta name="description" content="Local-first desktop app for Windows and macOS. Bring your own API keys. No subscription, no backend, no middleman." />
 <meta name="theme-color" content="#0a0a0a" />
 <link rel="icon" type="image/svg+xml" href="assets/meetscribe-icon.svg" />
 
@@ -638,10 +638,25 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .btn.is-soon .platform { color: var(--muted); }
 .btn.is-soon svg { opacity: 0.5; }
 
-/* OS-detect: JS toggles .is-mac / .is-win on <html>. Mac visitors get the coming-soon button + Gatekeeper note accented. */
-.is-mac .btn.is-soon { border-color: var(--accent); color: var(--accent); }
-.is-mac .btn.is-soon svg { opacity: 0.7; }
-.is-mac .btn.is-soon .platform { color: color-mix(in oklab, var(--accent) 75%, var(--muted)); }
+/* ---------- Grouped-by-OS downloads ---------- */
+.downloads { margin: 28px 0 8px; display: grid; gap: 14px; }
+.dl-group  { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+.dl-os     { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 600; font-size: 14px; }
+.dl-os svg { opacity: .8; }
+.dl-btns   { display: flex; flex-wrap: wrap; gap: 10px; }
+.dl-hint   { margin: 0 0 4px; color: var(--muted); font-size: 14px; max-width: 560px; }
+.dl-hint strong { color: var(--ink-2); font-weight: 500; }
+@media (max-width: 640px) { .dl-group { grid-template-columns: 1fr; gap: 8px; } }
+
+/* OS-detect: JS toggles .is-mac / .is-win on <html> for styling hooks only.
+   Default emphasis = Windows installer (.primary). A Mac visitor gets the accent
+   moved to the Apple-Silicon button, and the Windows primary flattens to a plain button. */
+.is-mac .btn-win.primary { background: var(--bg-card); border-color: var(--rule); color: var(--ink); }
+.is-mac .btn-win.primary:hover { border-color: color-mix(in oklab, var(--ink) 35%, transparent); background: var(--bg-card); }
+.is-mac .btn-win.primary .platform { color: var(--muted); }
+.is-mac .btn-mac-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.is-mac .btn-mac-primary:hover { background: color-mix(in oklab, var(--accent) 88%, black); border-color: color-mix(in oklab, var(--accent) 88%, black); color: var(--accent-ink); }
+.is-mac .btn-mac-primary .platform { color: color-mix(in oklab, var(--accent-ink) 80%, transparent); }
 
 /* ---------- macOS Gatekeeper first-run note ---------- */
 .gatekeeper {
@@ -735,22 +750,32 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
     <!-- ===== Hero ===== -->
     <section class="hero" data-screen-label="Hero" id="download">
       <h1>Meeting transcripts and summaries — your keys, your data, no middleman.</h1>
-      <p class="lede">Local-first desktop app for Windows (macOS coming soon). Bring your own&nbsp;API&nbsp;keys. No&nbsp;subscription.</p>
+      <p class="lede">Local-first desktop app for Windows and macOS. Bring your own&nbsp;API&nbsp;keys. No&nbsp;subscription.</p>
 
-      <div class="cta-row" role="group" aria-label="Download MeetScribe">
-        <a class="btn primary btn-win" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.1/MeetScribe-0.1.1-win-Setup.exe">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M0 2.2 5.7 1.4v5.2H0V2.2zm0 5.2h5.7v5.2L0 11.8V7.4zm6.4-6.1L14 0v6.6H6.4V1.3zm0 6.1H14V14l-7.6-1.1V7.4z"/></svg>
-          Windows <span class="platform">— installer (.exe)</span>
-        </a>
-        <a class="btn btn-win" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.1/MeetScribe-0.1.1-win-Portable.zip">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M0 2.2 5.7 1.4v5.2H0V2.2zm0 5.2h5.7v5.2L0 11.8V7.4zm6.4-6.1L14 0v6.6H6.4V1.3zm0 6.1H14V14l-7.6-1.1V7.4z"/></svg>
-          Windows <span class="platform">— portable (.zip)</span>
-        </a>
-        <span class="btn btn-mac is-soon" aria-disabled="true" title="macOS build is not yet available">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 1.2c.1.9-.3 1.7-.8 2.3-.6.6-1.5 1-2.2.9-.1-.8.3-1.7.8-2.3.6-.6 1.5-1 2.2-.9zM12.6 5.6c-1-.6-2.4-.7-3 0-.4.4-1.1.4-1.5 0-.5-.4-2-.5-3 .1-1.5 1-1.4 4.1-.1 6.3.5.8 1.2 1.7 2 1.7s1-.5 2-.5 1.2.5 2 .5 1.5-.8 2-1.7c.4-.6.6-1.2.7-1.3-1.9-.7-2.1-3.4-.1-5.1z"/></svg>
-          macOS <span class="platform">— coming soon</span>
-        </span>
+      <div class="downloads" role="group" aria-label="Download MeetScribe">
+        <div class="dl-group">
+          <span class="dl-os">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M0 2.2 5.7 1.4v5.2H0V2.2zm0 5.2h5.7v5.2L0 11.8V7.4zm6.4-6.1L14 0v6.6H6.4V1.3zm0 6.1H14V14l-7.6-1.1V7.4z"/></svg>
+            Windows
+          </span>
+          <div class="dl-btns">
+            <a class="btn primary btn-win" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.3/MeetScribe-0.1.3-win-Setup.exe">Installer <span class="platform">(.exe)</span></a>
+            <a class="btn btn-win" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.3/MeetScribe-0.1.3-win-Portable.zip">Portable <span class="platform">(.zip)</span></a>
+          </div>
+        </div>
+        <div class="dl-group">
+          <span class="dl-os">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 1.2c.1.9-.3 1.7-.8 2.3-.6.6-1.5 1-2.2.9-.1-.8.3-1.7.8-2.3.6-.6 1.5-1 2.2-.9zM12.6 5.6c-1-.6-2.4-.7-3 0-.4.4-1.1.4-1.5 0-.5-.4-2-.5-3 .1-1.5 1-1.4 4.1-.1 6.3.5.8 1.2 1.7 2 1.7s1-.5 2-.5 1.2.5 2 .5 1.5-.8 2-1.7c.4-.6.6-1.2.7-1.3-1.9-.7-2.1-3.4-.1-5.1z"/></svg>
+            macOS
+          </span>
+          <div class="dl-btns">
+            <a class="btn btn-mac btn-mac-primary" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.3/MeetScribe-0.1.3-mac-arm64.dmg">Apple&nbsp;Silicon <span class="platform">(.dmg)</span></a>
+            <a class="btn btn-mac" href="https://github.com/xuantruong2k/meetscribe-release/releases/download/v0.1.3/MeetScribe-0.1.3-mac-x86_64.dmg">Intel <span class="platform">(.dmg)</span></a>
+          </div>
+        </div>
       </div>
+
+      <p class="dl-hint">Not sure which Mac? <strong>Apple&nbsp;Silicon</strong> = M1&ndash;M4; <strong>Intel</strong> = pre-2021. Check via the Apple&nbsp;menu &rarr; About&nbsp;This&nbsp;Mac.</p>
 
       <p class="honesty"><strong>Requires two API keys</strong> (STT&nbsp;+&nbsp;LLM). Setup takes ~5&nbsp;minutes. Often free for light use, ~$15&ndash;20/month if you record 40&nbsp;hrs/month.</p>
 
@@ -758,10 +783,10 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
       <details class="gatekeeper">
         <summary>
           <span class="gk-os">macOS</span>
-          <span class="gk-msg">Running the early macOS build? First launch says <em>&ldquo;MeetScribe is damaged&rdquo;</em> — it isn't. Here's the one-time fix.</span>
+          <span class="gk-msg">macOS first launch says <em>&ldquo;MeetScribe is damaged&rdquo;</em>? It isn't — here's the one-time fix.</span>
         </summary>
         <div class="gk-body">
-          <p>The macOS app is still in preview and isn't notarized by Apple yet, so Gatekeeper blocks it on first open. The app is fine — macOS just won't vouch for an app without a Developer&nbsp;ID certificate. Clear the quarantine flag once and it opens normally from then on. Apple-Silicon Macs only for now.</p>
+          <p>The macOS app isn't notarized by Apple yet, so Gatekeeper blocks it on first open. The app is fine — macOS just won't vouch for an app without a Developer&nbsp;ID certificate. Clear the quarantine flag once and it opens normally from then on.</p>
           <div class="gk-methods">
             <div class="gk-method">
               <h4>Terminal — fastest</h4>
@@ -842,7 +867,7 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
             <span class="dur">47m 45s</span>
           </div>
         </div>
-        <figcaption class="fine" style="padding: 10px 16px 14px;">macOS build pictured — Windows ships first.</figcaption>
+        <figcaption class="fine" style="padding: 10px 16px 14px;">macOS build pictured.</figcaption>
       </figure>
     </section>
 
@@ -1017,7 +1042,7 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
       <div class="kicker">Quick setup</div>
       <h2>From download to first transcript in ~5 minutes.</h2>
       <ol class="setup">
-        <li class="step"><div><b>Download</b> <span>for Windows (macOS coming soon).</span></div></li>
+        <li class="step"><div><b>Download</b> <span>for Windows or macOS.</span></div></li>
         <li class="step"><div><b>Get a free STT key</b> <span>from Gladia or AssemblyAI.</span></div></li>
         <li class="step"><div><b>Get a free LLM key</b> <span>from Gemini (recommended for balance) or DeepSeek (cheapest).</span></div></li>
         <li class="step"><div><b>Paste both keys.</b> <span>Start recording.</span></div></li>
@@ -1074,7 +1099,7 @@ footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
     <!-- BUMP ON EACH RELEASE: version + commit -->
     <!-- Hidden for now — restore to show build/version info in footer.
     <div class="foot-meta">
-      build <span style="color:var(--ink-2);">v0.1.1</span> &middot; commit <span style="color:var(--ink-2);">226d2ed</span><span class="sep">&middot;</span>signed Windows binary<span class="sep">&middot;</span>SHA-256 in release notes
+      build <span style="color:var(--ink-2);">v0.1.3</span> &middot; commit <span style="color:var(--ink-2);">710a121</span><span class="sep">&middot;</span>Windows + macOS<span class="sep">&middot;</span>SHA-256 in release notes
     </div>
     -->
   </footer>
