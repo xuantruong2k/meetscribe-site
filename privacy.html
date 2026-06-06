@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy — MeetScribe</title>
+<meta name="description" content="MeetScribe privacy policy. A local-first desktop app with no backend: your audio, transcripts, keys, and summaries stay on your machine." />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="robots" content="index, follow" />
+<link rel="icon" type="image/svg+xml" href="assets/meetscribe-icon.svg" />
+
+<style>
+/* ---------- Tokens (shared with index.html) ---------- */
+:root {
+  --bg:        #fbfaf7;
+  --bg-soft:   #f3f0e9;
+  --bg-card:   #ffffff;
+  --bg-inset:  #f6f3ec;
+  --ink:       #14130f;
+  --ink-2:     #34322c;
+  --muted:     #6f6c63;
+  --rule:      #e7e3d8;
+  --rule-soft: #efece3;
+  --accent:    #e44b3a;
+  --accent-ink:#ffffff;
+  --accent-tint:#fde9e6;
+  --ok:        #2f7d4a;
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --col: 720px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #0a0a0a;
+    --bg-soft:   #111110;
+    --bg-card:   #131312;
+    --bg-inset:  #161614;
+    --ink:       #f4f1ea;
+    --ink-2:     #d4d0c5;
+    --muted:     #8a877e;
+    --rule:      #211f1c;
+    --rule-soft: #1a1816;
+    --accent:    #ef5645;
+    --accent-ink:#ffffff;
+    --accent-tint:#2a1411;
+    --ok:        #5dbe7a;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { color-scheme: light dark; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: color-mix(in oklab, var(--ink) 25%, transparent); }
+a:hover { text-decoration-color: var(--accent); color: var(--accent); }
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+.wrap { max-width: calc(var(--col) + 64px); padding: 0 32px; margin: 0 auto; }
+
+/* ---------- Site head (matches index.html) ---------- */
+.site-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 0 0; font-size: 14px;
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 600; }
+.brand:hover { color: var(--ink); }
+.brand-name { letter-spacing: -0.012em; }
+.brand-mark { display: inline-block; width: 26px; height: 26px; border-radius: 6px; }
+.head-links { display: flex; gap: 22px; align-items: center; color: var(--muted); }
+.head-links a { color: var(--muted); text-decoration: none; }
+.head-links a:hover { color: var(--ink); }
+
+/* ---------- Typography ---------- */
+main { padding: 56px 0 0; }
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: 38px; line-height: 1.14; letter-spacing: -0.022em; }
+h2 { font-size: 22px; line-height: 1.25; margin: 40px 0 12px; }
+h3 { font-size: 16px; line-height: 1.3; margin: 24px 0 6px; }
+
+p, li { text-wrap: pretty; max-width: var(--col); }
+p { margin: 0 0 1em; }
+.lede { font-size: 18.5px; color: var(--ink-2); line-height: 1.55; margin-top: 14px; }
+
+.kicker {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.updated { color: var(--muted); font-size: 14px; font-family: var(--mono); margin-top: 18px; }
+.updated .sep { opacity: .5; margin: 0 6px; }
+
+ul, ol { padding-left: 22px; margin: 0 0 1em; }
+li { margin: 6px 0; color: var(--ink-2); }
+li b, p b { color: var(--ink); font-weight: 600; }
+
+code, .mono { font-family: var(--mono); font-size: 13px; background: var(--bg-inset); padding: 1px 6px; border-radius: 4px; color: var(--ink-2); }
+
+/* ---------- Highlight box ---------- */
+.tldr {
+  margin: 28px 0 8px;
+  padding: 18px 20px;
+  border-left: 2px solid var(--accent);
+  background: var(--bg-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink-2);
+}
+.tldr p { margin: 0 0 8px; }
+.tldr p:last-child { margin-bottom: 0; }
+
+/* ---------- Provider table ---------- */
+.tbl { width: 100%; border-collapse: collapse; margin: 8px 0 4px; }
+.tbl th, .tbl td { text-align: left; padding: 11px 12px 11px 0; border-bottom: 1px solid var(--rule-soft); font-size: 15px; vertical-align: top; }
+.tbl th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; border-bottom-color: var(--rule); }
+.tbl td b { color: var(--ink); }
+
+.fine { color: var(--muted); font-size: 14px; }
+
+/* ---------- Footer (matches index.html) ---------- */
+footer {
+  margin-top: 56px; padding: 36px 0 56px;
+  border-top: 1px solid var(--rule); color: var(--muted); font-size: 13.5px;
+}
+footer a { color: var(--ink-2); }
+.back { margin-bottom: 18px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="site-head">
+    <a class="brand" href="/" aria-label="MeetScribe home">
+      <img class="brand-mark" src="assets/meetscribe-icon.svg" alt="" width="26" height="26" />
+      <span class="brand-name">MeetScribe</span>
+    </a>
+    <nav class="head-links" aria-label="Primary">
+      <a href="/#how">How it works</a>
+      <a href="/#download">Download</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <div class="kicker">Legal</div>
+    <h1>MeetScribe Privacy Policy</h1>
+    <p class="lede">MeetScribe ("the app") is a proprietary desktop application for Windows and macOS that records meetings, transcribes them, and generates summaries. This policy explains what the app does with your data. The official website is <a href="https://meetscribe.goldenpaw.org">meetscribe.goldenpaw.org</a>.</p>
+    <p class="updated">Last updated: June 6, 2026</p>
+
+    <div class="tldr">
+      <p><b>The short version:</b> MeetScribe is <b>local-first</b>. Your recordings, transcripts, summaries, and settings live on your own computer — we do not run any server that receives or stores them. The app has no user accounts and collects no analytics or telemetry. The only data that leaves your machine is audio (sent to the transcription service you choose) and transcript text (sent to the AI service you choose) so the app can do its job. You supply your own API keys for those services and connect to them directly.</p>
+    </div>
+
+    <h2>1. Who is responsible for your data</h2>
+    <p>MeetScribe is published by <b>Golden Paw</b>. Because the app stores your content locally and connects directly to the third-party services <em>you</em> configure with <em>your own</em> API keys, you and those service providers are the parties that hold your meeting data — Golden Paw never receives it.</p>
+    <p>For privacy questions, contact us at <a href="mailto:meetscribe.support@goldenpaw.org">meetscribe.support@goldenpaw.org</a> or visit <a href="https://meetscribe.goldenpaw.org">meetscribe.goldenpaw.org</a>.</p>
+
+    <h2>2. What the app accesses on your device</h2>
+    <table class="tbl">
+      <thead>
+        <tr><th>Data</th><th>Why</th><th>Where it goes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Microphone audio</b></td><td>To capture your voice during a recording</td><td>Streamed to your chosen transcription service; mixed audio is processed in memory</td></tr>
+        <tr><td><b>System audio (loopback)</b></td><td>To capture other participants' voices</td><td>Same as above</td></tr>
+        <tr><td><b>Transcript text</b></td><td>To produce live and post-meeting summaries</td><td>Sent to your chosen AI summary service</td></tr>
+        <tr><td><b>API keys</b> you enter</td><td>To authenticate to the transcription and AI services</td><td>Stored in the operating system's secure credential store (Windows Credential Manager / macOS Keychain) — never in plain files</td></tr>
+        <tr><td><b>Your preferences</b></td><td>To remember settings between launches</td><td>Stored locally on your device</td></tr>
+      </tbody>
+    </table>
+
+    <h2>3. Where your data is stored (locally)</h2>
+    <p>All meeting content stays on your computer. Nothing is uploaded to a Golden Paw server, because there isn't one.</p>
+    <h3>Windows</h3>
+    <ul>
+      <li>Recordings metadata, transcripts, summaries, logs: <span class="mono">%LOCALAPPDATA%\MeetScribe\</span></li>
+      <li>Settings: <span class="mono">%APPDATA%\MeetScribe\settings.json</span></li>
+      <li>API keys: Windows Credential Manager</li>
+    </ul>
+    <h3>macOS</h3>
+    <ul>
+      <li>Recordings metadata, transcripts, summaries, logs: <span class="mono">~/Library/Application Support/MeetScribe/</span></li>
+      <li>Settings: app preferences (UserDefaults)</li>
+      <li>API keys: macOS Keychain</li>
+    </ul>
+
+    <h2>4. Third-party services your data passes through</h2>
+    <p>To transcribe and summarize a meeting, the app must send data to external services <b>over an encrypted (TLS) connection</b>. You choose which providers to use and supply your own API keys, so your use of each service is also governed by <b>that provider's</b> privacy policy and terms.</p>
+    <h3>Transcription <span class="fine">(audio is sent to the one you select)</span></h3>
+    <ul>
+      <li>Gladia — <a href="https://www.gladia.io" rel="noopener noreferrer">gladia.io</a></li>
+      <li>AssemblyAI — <a href="https://www.assemblyai.com" rel="noopener noreferrer">assemblyai.com</a></li>
+    </ul>
+    <h3>AI summaries <span class="fine">(transcript text is sent to the one you select)</span></h3>
+    <ul>
+      <li>Google Gemini — <a href="https://policies.google.com/privacy" rel="noopener noreferrer">policies.google.com/privacy</a></li>
+      <li>OpenAI — <a href="https://openai.com/policies/privacy-policy" rel="noopener noreferrer">openai.com/policies/privacy-policy</a></li>
+      <li>DeepSeek — <a href="https://www.deepseek.com" rel="noopener noreferrer">deepseek.com</a></li>
+    </ul>
+    <p>The app only contacts the providers you have configured. If you do not enter a key for a provider, no data is sent to it. We are not responsible for how these independent providers handle the data you send them — please review their policies, including any data-retention or model-training terms.</p>
+
+    <h2>5. What we do NOT do</h2>
+    <ul>
+      <li>We do <b>not</b> collect analytics, usage statistics, or telemetry.</li>
+      <li>We do <b>not</b> require an account or sign-in.</li>
+      <li>We do <b>not</b> sell, rent, or share your data with advertisers.</li>
+      <li>We do <b>not</b> transmit your recordings, transcripts, or summaries to any Golden Paw–operated server (we operate none).</li>
+    </ul>
+
+    <h2>6. Updates</h2>
+    <p>The Windows app distributed through the Microsoft Store receives updates through the Store. Outside the Store, the app checks for updates <b>only when you ask it to</b> in Settings — there is no background update tracking.</p>
+
+    <h2>7. Data retention and deletion</h2>
+    <p>Because all content is stored locally, <b>you</b> control retention:</p>
+    <ul>
+      <li>Delete an individual meeting from within the app.</li>
+      <li>Delete the data folders listed in Section 3 to remove everything.</li>
+      <li>Uninstalling the app and clearing those folders, plus removing the saved API keys from your credential store, removes all locally held data.</li>
+    </ul>
+    <p>Data already sent to a third-party provider is retained according to that provider's own policy; manage or delete it through your account with them.</p>
+
+    <h2>8. Security</h2>
+    <p>API keys are held only in your operating system's secure credential store, not in configuration files. All network connections to transcription and AI services use TLS encryption. Local files are protected by your operating system's normal user-account permissions.</p>
+
+    <h2>9. Children's privacy</h2>
+    <p>MeetScribe is a productivity tool intended for general business and personal use and is not directed at children under 13. We do not knowingly collect data from children.</p>
+
+    <h2>10. Your rights</h2>
+    <p>Since your data resides on your own device and in your own provider accounts, you can access, export, or delete it directly at any time. If you have questions about this policy, contact us at the address in Section 1.</p>
+
+    <h2>11. Changes to this policy</h2>
+    <p>We may update this policy as the app evolves. Material changes will be reflected by updating the "Last updated" date at the top. Continued use of the app after a change constitutes acceptance of the revised policy.</p>
+
+  </main>
+
+  <footer>
+    <div class="back"><a href="/">&larr; Back to MeetScribe</a></div>
+    <p class="fine">MeetScribe — meeting transcripts and summaries, your keys, your data, no middleman. No newsletter. No third-party analytics.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
