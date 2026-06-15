@@ -61,3 +61,8 @@ Do not add any of the following without re-opening the discussion:
 - A "Compare to Granola / Otter" page (the Yes/No fit block handles this).
 - Google Analytics, Mixpanel, Segment, Amplitude, or any third-party tag manager. Cloudflare Pages' built-in server-side analytics is sufficient. Anything client-side contradicts the page's pitch.
 - Any JS framework or build tooling.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
